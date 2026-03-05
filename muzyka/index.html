@@ -168,7 +168,7 @@ button:active {
     powrót do strony głównej
   </button>
   <div class="banner">
-    <img src="baner.png" alt="Baner stronyy">
+    <img src="baner.png" alt="Baner strony">
   </div>
 </div>
 
@@ -176,7 +176,16 @@ button:active {
 <div id="song-list"></div>
 
 <script>
-const client = new WebTorrent()
+const client = new WebTorrent({
+  rtcConfig: {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun2.l.google.com:19302' },
+      { urls: 'stun:stun3.l.google.com:19302' }
+    ]
+  }
+})
 
 /* 🔥 TU DODAJESZ NOWE PIOSENKI */
 const songs = [
