@@ -168,7 +168,7 @@ button:active {
     powrót do strony głównej
   </button>
   <div class="banner">
-    <img src="baner.png" alt="Baner stronyT">
+    <img src="baner.png" alt="Baner stronyy">
   </div>
 </div>
 
@@ -218,21 +218,19 @@ songs.forEach((song, i) => {
     progressBar.innerHTML = ""
     status.innerText = "łączenie z siecią..."
 
-    client.add(song.magnet, {
-      announce: [
-        'wss://tracker.openwebtorrent.com',
-        'wss://tracker.btorrent.xyz'
-        'wss://tracker.openwebtorrent.com',
-        'wss://tracker.btorrent.xyz',
-        'wss://tracker.webtorrent.dev',
-        'wss://tracker.files.fm:7073/announce',
-        'wss://spacetradersapi-chatbox.herokuapp.com',
-        'wss://tracker.fastcast.nz',
-        'wss://tracker.sloppyta.co' 
-      ],
-      dht: false,
-      lsd: false
-    }, torrent => {
+client.add(song.magnet, {
+  announce: [
+    'wss://tracker.openwebtorrent.com',
+    'wss://tracker.btorrent.xyz',
+    'wss://tracker.webtorrent.dev',
+    'wss://tracker.files.fm:7073/announce',
+    'wss://spacetradersapi-chatbox.herokuapp.com',
+    'wss://tracker.fastcast.nz',
+    'wss://tracker.sloppyta.co'
+  ],
+  dht: false,
+  lsd: false
+}, torrent => {
 
       const totalSegments = 50
       const interval = setInterval(() => {
