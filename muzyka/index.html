@@ -33,12 +33,49 @@ body {
   padding: 20px;
   margin: 0;
 
-  /* GIF jako fixed tło po prawej */
   background-image: url('animacja.gif');
   background-repeat: no-repeat;
   background-position: calc(100% - 80px) 40px;
   background-attachment: fixed;
   background-size: auto;
+}
+
+/* ===== GÓRNY PANEL ===== */
+.top-bar {
+  position: relative;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.banner {
+  text-align: center;
+}
+
+.banner img {
+  max-width: 600px;
+  width: 100%;
+}
+
+/* przycisk powrotu */
+.home-button {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 2px 6px;
+  font-size: 0.9em;
+  background: #ffe09c;
+  color: black;
+  border: 2px solid #fff;
+  border-right-color: #404040;
+  border-bottom-color: #404040;
+  cursor: pointer;
+}
+
+.home-button:active {
+  border: 2px solid #404040;
+  border-right-color: #fff;
+  border-bottom-color: #fff;
 }
 
 /* Układ okienek piosenek */
@@ -125,12 +162,23 @@ button:active {
 
 <body>
 
+<!-- GÓRNY PANEL -->
+<div class="top-bar">
+  <button class="home-button" onclick="location.href='../'">
+    powrót do strony głównej
+  </button>
+  <div class="banner">
+    <img src="baner.png" alt="Baner strony">
+  </div>
+</div>
+
 <h1 style="color:#00ff00;">lista tworów muzycznych</h1>
 <div id="song-list"></div>
 
 <script>
 const client = new WebTorrent()
 
+/* 🔥 TU DODAJESZ NOWE PIOSENKI */
 const songs = [
   { title: "prypeć", magnet: "magnet:?xt=urn:btih:c46eda58ebe7ba395d516e3c6c967ec38c7af337&dn=prypec+remake.mp3&tr=wss://tracker.btorrent.xyz&tr=wss://tracker.openwebtorrent.com" },
   { title: "Piosenka 2", magnet: "magnet:?xt=urn:btih:TU_HASH_2" },
@@ -140,7 +188,6 @@ const songs = [
 const list = document.getElementById("song-list")
 
 songs.forEach((song, i) => {
-
   const div = document.createElement("div")
   div.className = "song"
 
@@ -158,7 +205,6 @@ songs.forEach((song, i) => {
   list.appendChild(div)
 
   document.getElementById(`btn-${i}`).onclick = () => {
-
     if (!song.magnet) {
       alert("Brak magnet linku!")
       return
@@ -182,25 +228,19 @@ songs.forEach((song, i) => {
     }, torrent => {
 
       const totalSegments = 50
-
       const interval = setInterval(() => {
-
         const percent = torrent.progress
         const filledSegments = Math.round(totalSegments * percent)
-
         const containerWidth = progressContainer.clientWidth - 4
         const segmentGap = 2
-        const segmentWidth =
-          (containerWidth - (totalSegments-1)*segmentGap)/totalSegments
+        const segmentWidth = (containerWidth - (totalSegments-1)*segmentGap)/totalSegments
 
         progressBar.innerHTML = ""
-
         for (let s=0; s<filledSegments; s++){
           const seg = document.createElement("div")
           seg.className = "progress-segment"
           seg.style.width = segmentWidth + "px"
-          seg.style.marginRight =
-            (s < totalSegments-1 ? segmentGap + "px" : "0")
+          seg.style.marginRight = (s < totalSegments-1 ? segmentGap + "px" : "0")
           progressBar.appendChild(seg)
         }
 
@@ -217,18 +257,15 @@ Prędkość: ${(torrent.downloadSpeed/1024).toFixed(2)} KB/s`
 
         torrent.files.forEach(file => {
           file.getBlobURL((err, url) => {
-
             const saveBtn = document.createElement("button")
             saveBtn.className = "save-button"
             saveBtn.textContent = "zapisz plik"
-
             saveBtn.onclick = () => {
               const a = document.createElement("a")
               a.href = url
               a.download = file.name
               a.click()
             }
-
             div.appendChild(saveBtn)
           })
         })
