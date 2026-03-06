@@ -6,7 +6,7 @@
 
 <style>
 :root {
-  --base-font-size: 18px;
+  --base-font-size: 20px;
 }
 
 /* Czcionka */
@@ -25,35 +25,39 @@ body, button, strong, h1 {
 body {
   background-color: #000;
   color: #ffe09c;
-  padding: 20px;
+  padding: 0;
   background-image: url('animacja.gif');
   background-repeat: no-repeat;
-  background-position: calc(100% - 40px) 40px;
-  background-attachment: fixed;
+  background-position: calc(100% - 0px) 60px;
+  background-attachment: scroll;
+  image-rendering: pixelated; /* nearest / pixel art */
+
+  /* 🔹 nowa linia */
+  background-size: 640px 640px; /* szerokość x wysokość */
 }
 
-/* ===== GÓRNY PANEL ===== */
-.top-bar {
-  position: relative;
+/* ===== BANER ===== */
+.banner-top {
   width: 100%;
-  margin-bottom: 20px;
+  text-align: center; /* centruje obrazek */
+  margin-top: 10px;
 }
 
-.banner {
-  text-align: center;
+.banner-top img {
+  display: inline-block;
+  width: 384px;
+  height: 128px;
+  image-rendering: pixelated; /* pixelart */
+  margin-left: -100px; /* przesuwa o 50px w lewo */
 }
 
-.banner img {
-  max-width: 100%;
-  height: 80px; /* niski baner */
-  object-fit: cover;
+/* ===== ZAWARTOŚĆ ===== */
+.content {
+  padding: 20px;
 }
 
+/* PRZYCISK POWROTU */
 .home-button {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
   padding: 2px 6px;
   font-size: 0.9em;
   background: #ffe09c;
@@ -62,6 +66,7 @@ body {
   border-right-color: #404040;
   border-bottom-color: #404040;
   cursor: pointer;
+  margin-bottom: 20px;
 }
 
 .home-button:active {
@@ -123,7 +128,7 @@ button:active {
   margin-bottom: 10px;
 }
 
-/* Volume */
+/* GŁOŚNOŚĆ */
 .volume-container {
   display: flex;
   align-items: center;
@@ -148,7 +153,6 @@ button:active {
   border: 2px solid #fff;
   border-right-color: #404040;
   border-bottom-color: #404040;
-  cursor: pointer;
 }
 
 .volume-container input[type="range"]::-moz-range-thumb {
@@ -158,10 +162,9 @@ button:active {
   border: 2px solid #fff;
   border-right-color: #404040;
   border-bottom-color: #404040;
-  cursor: pointer;
 }
 
-/* ===== LISTA UTWORÓW ===== */
+/* LISTA UTWORÓW */
 .song {
   display: flex;
   align-items: center;
@@ -176,16 +179,19 @@ button:active {
 
 <body>
 
-<div class="top-bar">
-  <button class="home-button" onclick="location.href='../'">
-    zaznanie aktu powrotu do przedpokoju domu grzybomu
-  </button>
-  <div class="banner">
-    <img src="../baner.png" alt="<baner tu będzie>">
-  </div>
+<!-- BANER -->
+<div class="banner-top">
+  <img src="dgnBaner.jpg" alt="baner strony">
 </div>
+
+<div class="content">
+
+<button class="home-button" onclick="location.href='../'">
+zaznanie aktu powrotu do przedpokoju domu grzybomu
+</button>
+
 <h1 style="color:#80ff80;">odtworzyciel plików mp3</h1>
-<!-- ODTWARZACZ -->
+
 <div class="player">
   <div id="track-name">zapodaj nośnik z utworem na odtwarzacz</div>
 
@@ -200,94 +206,101 @@ button:active {
   <div id="progress-time">0:00 / 0:00</div>
 
   <div class="volume-container">
-    <span style="color:#ffe09c; margin-right:5px;">głośność</span>
+    <span style="margin-right:5px;">głośność</span>
     <input type="range" min="0" max="1" step="0.01" value="1" onchange="setVolume(this.value)" id="volume-slider">
-    <span id="volume-value" style="color:#ffe09c;">100%</span>
+    <span id="volume-value">100%</span>
   </div>
 </div>
 
 <h1 style="color:#80ff80;">półki szafy pełnej tworów muzycznych,</h1>
 <h1 style="color:#80ff80;">poszukaj czegoś dla siebie przybyszu</h1>
+
 <div id="song-list"></div>
+</div>
 
 <script>
 const audio = new Audio()
 let currentFile = ""
 
-// odtwarzacz
 function play(){ audio.play() }
 function pause(){ audio.pause() }
 function stop(){ audio.pause(); audio.currentTime = 0 }
+
 function setVolume(v){
   audio.volume = v
   document.getElementById("volume-value").innerText = Math.round(v*100)+"%"
 }
+
 function download(){
   if(!currentFile) return
-  const a = document.createElement("a")
-  a.href = currentFile
-  a.download = ""
+  const a=document.createElement("a")
+  a.href=currentFile
+  a.download=""
   a.click()
 }
 
-// aktualizacja paska czasu
 function updateProgress(){
-  const container = document.getElementById("progress-container")
+  const container=document.getElementById("progress-container")
   container.innerHTML=""
-  if(audio.duration){
-    const totalSegments = 50
-    const gap = 2
-    const segmentWidth = (container.clientWidth - gap*(totalSegments-1)) / totalSegments
 
-    for(let i=0;i<totalSegments;i++){
-      const seg = document.createElement("div")
+  if(audio.duration){
+    const total=50
+    const gap=2
+    const w=(container.clientWidth-gap*(total-1))/total
+
+    for(let i=0;i<total;i++){
+      const seg=document.createElement("div")
       seg.className="progress-segment"
-      seg.style.width = segmentWidth + "px"
-      seg.style.marginRight = (i<totalSegments-1? gap+"px":"0")
-      if(i < Math.round(totalSegments * (audio.currentTime/audio.duration))){
+      seg.style.width=w+"px"
+      seg.style.marginRight=(i<total-1?gap+"px":"0")
+
+      if(i<Math.round(total*(audio.currentTime/audio.duration))){
         seg.style.background="#ffe09c"
-      } else {
+      }else{
         seg.style.background="#000"
       }
       container.appendChild(seg)
     }
   }
 
-  const curMin = Math.floor(audio.currentTime/60)
-  const curSec = Math.floor(audio.currentTime%60).toString().padStart(2,'0')
-  const durMin = Math.floor(audio.duration/60) || 0
-  const durSec = Math.floor(audio.duration%60).toString().padStart(2,'0')
-  document.getElementById("progress-time").innerText = `${curMin}:${curSec} / ${durMin}:${durSec}`
+  const cm=Math.floor(audio.currentTime/60)
+  const cs=Math.floor(audio.currentTime%60).toString().padStart(2,'0')
+  const dm=Math.floor(audio.duration/60)||0
+  const ds=Math.floor(audio.duration%60).toString().padStart(2,'0')
+
+  document.getElementById("progress-time").innerText=`${cm}:${cs} / ${dm}:${ds}`
 }
 
-audio.ontimeupdate = updateProgress
+audio.ontimeupdate=updateProgress
 
 function seek(e){
-  const container = document.getElementById("progress-container")
-  const rect = container.getBoundingClientRect()
-  const percent = (e.clientX - rect.left)/rect.width
-  audio.currentTime = percent * audio.duration
+  const container=document.getElementById("progress-container")
+  const rect=container.getBoundingClientRect()
+  const percent=(e.clientX-rect.left)/rect.width
+  audio.currentTime=percent*audio.duration
 }
 
-// lista utworów
 fetch("lista.json")
-.then(r => r.json())
-.then(files => {
+.then(r=>r.json())
+.then(files=>{
   files.reverse()
-  const list = document.getElementById("song-list")
-  files.forEach(file => {
-    const div = document.createElement("div")
-    div.className = "song"
-    div.innerHTML = `<strong>${file}</strong> <button onclick="loadTrack('pliki_mp3/${file}')">zapodaj na odtwarzacz</button>`
+  const list=document.getElementById("song-list")
+  files.forEach(file=>{
+    const div=document.createElement("div")
+    div.className="song"
+    div.innerHTML=`<strong>${file}</strong>
+<button onclick="loadTrack('pliki_mp3/${file}')">
+zapodaj na odtwarzacz
+</button>`
     list.appendChild(div)
   })
 })
 
-// ładowanie utworu
 function loadTrack(file){
-  currentFile = file
-  audio.src = file
-  document.getElementById("track-name").innerText = file.replace("pliki_mp3/","")
+  currentFile=file
+  audio.src=file
+  document.getElementById("track-name").innerText=
+  file.replace("pliki_mp3/","")
   audio.play()
 }
 </script>
