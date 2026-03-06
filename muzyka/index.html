@@ -178,21 +178,21 @@ button:active {
 
 <div class="top-bar">
   <button class="home-button" onclick="location.href='../'">
-    powrót do strony głównej
+    zaznanie powrotu do przedpokoju domu grzybomu
   </button>
   <div class="banner">
     <img src="../baner.png" alt="<baner w budowie>">
   </div>
 </div>
-
+<h1 style="color:#00ff00;">lista tworów muzycznych</h1>
 <!-- ODTWARZACZ -->
 <div class="player">
-  <div id="track-name">brak utworu</div>
+  <div id="track-name">zapodaj nośnik z utworem na odtwarzacz</div>
 
   <div class="controls">
     <button onclick="play()">graj</button>
     <button onclick="pause()">pauza</button>
-    <button onclick="stop()">wyłącz</button>
+    <button onclick="stop()">zeruj</button>
     <button onclick="download()">ściągnij mp3 ZA DARMOCHĘ</button>
   </div>
 
@@ -278,7 +278,7 @@ fetch("lista.json")
   files.forEach(file => {
     const div = document.createElement("div")
     div.className = "song"
-    div.innerHTML = `<strong>${file}</strong> <button onclick="loadTrack('pliki_mp3/${file}')">odtwórz</button>`
+    div.innerHTML = `<strong>${file}</strong> <button onclick="loadTrack('pliki_mp3/${file}')">zapodaj na odtwarzacz</button>`
     list.appendChild(div)
   })
 })
