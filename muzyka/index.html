@@ -2,12 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Pobieranie MP3</title>
-<script src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script>
+<title>DG.N icy-muzyka</title>
 
 <style>
-
-/* 🔥 Zmieniaj tylko tutaj */
 :root {
   --base-font-size: 18px;
 }
@@ -16,35 +13,30 @@
 @font-face {
   font-family: "AcPlus_IBM_VGA";
   src: url('AcPlus_IBM_VGA_8x16.ttf') format("truetype");
-  font-display: block;
 }
 
 /* GLOBAL */
-body, button, strong, .status, h1 {
+body, button, strong, h1 {
   font-family: "AcPlus_IBM_VGA", monospace;
   font-size: var(--base-font-size);
-  -webkit-font-smoothing: none;
-  font-smooth: never;
+  margin: 0;
 }
 
 body {
   background-color: #000;
   color: #ffe09c;
   padding: 20px;
-  margin: 0;
-
   background-image: url('animacja.gif');
   background-repeat: no-repeat;
   background-position: calc(100% - 80px) 40px;
   background-attachment: fixed;
-  background-size: auto;
 }
 
 /* ===== GÓRNY PANEL ===== */
 .top-bar {
   position: relative;
   width: 100%;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .banner {
@@ -52,11 +44,11 @@ body {
 }
 
 .banner img {
-  max-width: 600px;
-  width: 100%;
+  max-width: 100%;
+  height: 80px; /* niski baner */
+  object-fit: cover;
 }
 
-/* przycisk powrotu */
 .home-button {
   position: absolute;
   left: 0;
@@ -78,28 +70,6 @@ body {
   border-bottom-color: #fff;
 }
 
-/* Układ okienek piosenek */
-#song-list {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-/* OKIENKO 4:3 */
-.song {
-  width: 400px;
-  height: 300px;
-  background: #000000;
-  border: 2px solid #ffe09c;
-  padding: 10px;
-  margin-bottom: 20px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  position: relative;
-}
-
 /* PRZYCISKI 3D */
 button {
   padding: 2px 8px;
@@ -109,8 +79,6 @@ button {
   border-right-color: #404040;
   border-bottom-color: #404040;
   cursor: pointer;
-  margin-top: 10px;
-  display: inline-block;
 }
 
 button:active {
@@ -119,172 +87,209 @@ button:active {
   border-bottom-color: #fff;
 }
 
-/* Mały przycisk zapisu */
-.save-button {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  padding: 2px 6px;
-  font-size: 0.9em;
+/* ===== ODTWARZACZ ===== */
+.player {
+  width: 420px;
+  border: 2px solid #ffe09c;
+  padding: 10px;
+  margin-bottom: 20px;
 }
 
-/* Pasek postępu */
+#track-name {
+  margin-bottom: 10px;
+  color: #00ff00;
+}
+
+.controls {
+  margin-bottom: 10px;
+}
+
 .progress-container {
-  display: none;
-  margin-top: 15px;
-  width: 100%;
-  height: 20px;
-  background: #000;
-  border: 2px solid #808080;
-  box-sizing: border-box;
-  padding: 2px;
-}
-
-.progress-bar {
   display: flex;
-  height: 100%;
+  height: 20px;
+  border: 2px solid #808080;
+  cursor: pointer;
+  margin-bottom: 5px;
 }
 
 .progress-segment {
-  background: #ffe09c;
   height: 100%;
   flex-shrink: 0;
 }
 
-.status {
-  margin-top: 8px;
-  white-space: pre-line;
+#progress-time {
   color: #00ff00;
+  font-size: 0.9em;
+  margin-bottom: 10px;
 }
 
+/* Volume */
+.volume-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.volume-container input[type="range"] {
+  -webkit-appearance: none;
+  width: 150px;
+  height: 12px;
+  background: #000;
+  border: 2px solid #ffe09c;
+  outline: none;
+  margin-right: 5px;
+}
+
+.volume-container input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #ffe09c;
+  border: 2px solid #fff;
+  border-right-color: #404040;
+  border-bottom-color: #404040;
+  cursor: pointer;
+}
+
+.volume-container input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #ffe09c;
+  border: 2px solid #fff;
+  border-right-color: #404040;
+  border-bottom-color: #404040;
+  cursor: pointer;
+}
+
+/* ===== LISTA UTWORÓW ===== */
+.song {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 400px;
+  border: 2px solid #ffe09c;
+  padding: 10px;
+  margin-bottom: 10px;
+}
 </style>
 </head>
 
 <body>
 
-<!-- GÓRNY PANEL -->
 <div class="top-bar">
   <button class="home-button" onclick="location.href='../'">
     powrót do strony głównej
   </button>
   <div class="banner">
-    <img src="baner.png" alt="Baner strony">
+    <img src="../baner.png" alt="<baner w budowie>">
+  </div>
+</div>
+
+<!-- ODTWARZACZ -->
+<div class="player">
+  <div id="track-name">brak utworu</div>
+
+  <div class="controls">
+    <button onclick="play()">graj</button>
+    <button onclick="pause()">pauza</button>
+    <button onclick="stop()">wyłącz</button>
+    <button onclick="download()">ściągnij mp3 ZA DARMOCHĘ</button>
+  </div>
+
+  <div class="progress-container" id="progress-container" onclick="seek(event)"></div>
+  <div id="progress-time">0:00 / 0:00</div>
+
+  <div class="volume-container">
+    <span style="color:#ffe09c; margin-right:5px;">głośność</span>
+    <input type="range" min="0" max="1" step="0.01" value="1" onchange="setVolume(this.value)" id="volume-slider">
+    <span id="volume-value" style="color:#ffe09c;">100%</span>
   </div>
 </div>
 
 <h1 style="color:#00ff00;">lista tworów muzycznych</h1>
+
 <div id="song-list"></div>
 
 <script>
-const client = new WebTorrent({
-  rtcConfig: {
-    iceServers: [
-      { urls: 'stun:stun.l.google.com:19302' },
-      { urls: 'stun:stun1.l.google.com:19302' },
-      { urls: 'stun:stun2.l.google.com:19302' },
-      { urls: 'stun:stun3.l.google.com:19302' }
-    ]
-  }
-})
+const audio = new Audio()
+let currentFile = ""
 
-/* 🔥 TU DODAJESZ NOWE PIOSENKI */
-const songs = [
-  { title: "prypeć", magnet: "magnet:?xt=urn:btih:c46eda58ebe7ba395d516e3c6c967ec38c7af337&dn=prypec+remake.mp3&tr=wss://tracker.btorrent.xyz&tr=wss://tracker.openwebtorrent.com" },
-  { title: "Piosenka 2", magnet: "magnet:?xt=urn:btih:TU_HASH_2" },
-  { title: "Piosenka 3", magnet: "magnet:?xt=urn:btih:TU_HASH_3" }
-]
+// odtwarzacz
+function play(){ audio.play() }
+function pause(){ audio.pause() }
+function stop(){ audio.pause(); audio.currentTime = 0 }
+function setVolume(v){
+  audio.volume = v
+  document.getElementById("volume-value").innerText = Math.round(v*100)+"%"
+}
+function download(){
+  if(!currentFile) return
+  const a = document.createElement("a")
+  a.href = currentFile
+  a.download = ""
+  a.click()
+}
 
-const list = document.getElementById("song-list")
+// aktualizacja paska czasu
+function updateProgress(){
+  const container = document.getElementById("progress-container")
+  container.innerHTML=""
+  if(audio.duration){
+    const totalSegments = 50
+    const gap = 2
+    const segmentWidth = (container.clientWidth - gap*(totalSegments-1)) / totalSegments
 
-songs.forEach((song, i) => {
-  const div = document.createElement("div")
-  div.className = "song"
-
-  div.innerHTML = `
-    <strong>${song.title}</strong>
-    <button id="btn-${i}">ściągnij za darmochę</button>
-
-    <div class="progress-container" id="pc-${i}">
-      <div class="progress-bar" id="pb-${i}"></div>
-    </div>
-
-    <div class="status" id="status-${i}"></div>
-  `
-
-  list.appendChild(div)
-
-  document.getElementById(`btn-${i}`).onclick = () => {
-    if (!song.magnet) {
-      alert("Brak magnet linku!")
-      return
+    for(let i=0;i<totalSegments;i++){
+      const seg = document.createElement("div")
+      seg.className="progress-segment"
+      seg.style.width = segmentWidth + "px"
+      seg.style.marginRight = (i<totalSegments-1? gap+"px":"0")
+      if(i < Math.round(totalSegments * (audio.currentTime/audio.duration))){
+        seg.style.background="#ffe09c"
+      } else {
+        seg.style.background="#000"
+      }
+      container.appendChild(seg)
     }
-
-    const status = document.getElementById(`status-${i}`)
-    const progressContainer = document.getElementById(`pc-${i}`)
-    const progressBar = document.getElementById(`pb-${i}`)
-
-    progressContainer.style.display = "block"
-    progressBar.innerHTML = ""
-    status.innerText = "łączenie z siecią..."
-
-client.add(song.magnet, {
-  announce: [
-    'wss://tracker.openwebtorrent.com',
-    'wss://tracker.btorrent.xyz',
-    'wss://tracker.webtorrent.dev'
-  ],
-  dht: false,
-  lsd: false
-}, torrent => {
-
-      const totalSegments = 50
-      const interval = setInterval(() => {
-        const percent = torrent.progress
-        const filledSegments = Math.round(totalSegments * percent)
-        const containerWidth = progressContainer.clientWidth - 4
-        const segmentGap = 2
-        const segmentWidth = (containerWidth - (totalSegments-1)*segmentGap)/totalSegments
-
-        progressBar.innerHTML = ""
-        for (let s=0; s<filledSegments; s++){
-          const seg = document.createElement("div")
-          seg.className = "progress-segment"
-          seg.style.width = segmentWidth + "px"
-          seg.style.marginRight = (s < totalSegments-1 ? segmentGap + "px" : "0")
-          progressBar.appendChild(seg)
-        }
-
-        status.innerText =
-`Progres: ${(percent*100).toFixed(1)} %
-Pobrano: ${(torrent.downloaded/1024/1024).toFixed(2)} MB
-Prędkość: ${(torrent.downloadSpeed/1024).toFixed(2)} KB/s`
-
-      }, 500)
-
-      torrent.on('done', () => {
-        clearInterval(interval)
-        status.innerText += "\n\nprzetwarzanie ukończone"
-
-        torrent.files.forEach(file => {
-          file.getBlobURL((err, url) => {
-            const saveBtn = document.createElement("button")
-            saveBtn.className = "save-button"
-            saveBtn.textContent = "zapisz plik"
-            saveBtn.onclick = () => {
-              const a = document.createElement("a")
-              a.href = url
-              a.download = file.name
-              a.click()
-            }
-            div.appendChild(saveBtn)
-          })
-        })
-      })
-
-    })
   }
 
+  const curMin = Math.floor(audio.currentTime/60)
+  const curSec = Math.floor(audio.currentTime%60).toString().padStart(2,'0')
+  const durMin = Math.floor(audio.duration/60) || 0
+  const durSec = Math.floor(audio.duration%60).toString().padStart(2,'0')
+  document.getElementById("progress-time").innerText = `${curMin}:${curSec} / ${durMin}:${durSec}`
+}
+
+audio.ontimeupdate = updateProgress
+
+function seek(e){
+  const container = document.getElementById("progress-container")
+  const rect = container.getBoundingClientRect()
+  const percent = (e.clientX - rect.left)/rect.width
+  audio.currentTime = percent * audio.duration
+}
+
+// lista utworów
+fetch("lista.json")
+.then(r => r.json())
+.then(files => {
+  files.reverse()
+  const list = document.getElementById("song-list")
+  files.forEach(file => {
+    const div = document.createElement("div")
+    div.className = "song"
+    div.innerHTML = `<strong>${file}</strong> <button onclick="loadTrack('pliki_mp3/${file}')">odtwórz</button>`
+    list.appendChild(div)
+  })
 })
+
+// ładowanie utworu
+function loadTrack(file){
+  currentFile = file
+  audio.src = file
+  document.getElementById("track-name").innerText = file.replace("pliki_mp3/","")
+  audio.play()
+}
 </script>
 
 </body>
