@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <title>DG.N icy-muzyka</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
 :root {
   --base-font-size: 18px;
@@ -15,7 +17,7 @@
 }
 
 /* GLOBAL */
-body, button, strong, h1 {
+body, button, strong, h1, input {
   font-family: "AcPlus_IBM_VGA", monospace;
   font-size: var(--base-font-size);
   margin: 0;
@@ -27,34 +29,36 @@ body {
   padding: 0;
   background-image: url('animacja.gif');
   background-repeat: no-repeat;
-  background-position: right 175px top 40px;
+  background-position: calc(100% - 0px) 60px;
   background-attachment: scroll;
   image-rendering: pixelated;
+  background-size: 640px 640px; /* opcjonalnie dopasowane do rozmiaru GIFa */
 }
 
 /* ===== BANER ===== */
 .banner-top {
   width: 100%;
-  display: flex;
-  justify-content: center;
+  text-align: center;
   margin-top: 10px;
 }
 
 .banner-top img {
-  width: 256px;
+  display: inline-block;
+  width: 384px;
   height: 128px;
   image-rendering: pixelated;
+  /* jeśli chcesz przesunąć w lewo lub prawo: margin-left: -100px; */
 }
 
-/* ===== HOME BUTTON ===== */
+/* ===== ZAWARTOŚĆ ===== */
+.content {
+  padding: 20px;
+}
+
+/* PRZYCISK POWROTU */
 .home-button {
-  display: inline-block;
   padding: 2px 6px;
-  font-size: 0.9em;
-  max-width: 200px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 18px; /* dokładnie jak lista utworów */
   background: #ffe09c;
   color: black;
   border: 2px solid #fff;
@@ -62,6 +66,10 @@ body {
   border-bottom-color: #404040;
   cursor: pointer;
   margin-bottom: 20px;
+  white-space: nowrap;
+  max-width: 500px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .home-button:active {
@@ -98,6 +106,7 @@ button:active {
 #track-name {
   margin-bottom: 10px;
   color: #80ff80;
+  font-size: 18px;
 }
 
 .controls {
@@ -168,68 +177,78 @@ button:active {
   border: 2px solid #ffe09c;
   padding: 10px;
   margin-bottom: 10px;
+  font-size: 18px; /* taki sam rozmiar jak przycisk home-button i track-name */
 }
 
-/* RESPONSYWNOŚĆ */
 @media (max-width: 600px) {
+  /* Smartfon: zachowujemy ten sam font-size, ale zmniejszamy przycisk home */
+  .home-button {
+    max-width: 180px;
+    font-size: 18px; /* zachowuje identyczny rozmiar czcionki */
+  }
+
   .player, .song {
     width: 90%;
-  }
-  .home-button {
-    max-width: 150px;
-    font-size: 0.9em;
   }
 }
 </style>
 </head>
 
 <body>
+
+<!-- BANER -->
 <div class="banner-top">
-  <img src="dgnBaner.jpg" alt="baner">
+  <img src="dgnBaner.jpg" alt="baner strony">
 </div>
 
 <div class="content">
-  <button class="home-button" onclick="location.href='../'">
-    zaznanie aktu powrotu do przedpokoju domu grzybomu
-  </button>
 
-  <h1 style="color:#80ff80;">odtworzyciel plików mp3</h1>
+<button class="home-button" onclick="location.href='../'">
+zaznanie aktu powrotu do przedpokoju domu grzybomu
+</button>
 
-  <div class="player">
-    <div id="track-name">zapodaj nośnik z utworem na odtwarzacz</div>
-    <div class="controls">
-      <button onclick="play()">graj</button>
-      <button onclick="pause()">pauza</button>
-      <button onclick="stop()">zeruj</button>
-      <button onclick="download()">ściągnij mp3 ZA DARMOCHĘ</button>
-    </div>
-    <div class="progress-container" id="progress-container" onclick="seek(event)"></div>
-    <div id="progress-time">0:00 / 0:00</div>
-    <div class="volume-container">
-      <span style="margin-right:5px;">głośność</span>
-      <input type="range" min="0" max="1" step="0.01" value="1" onchange="setVolume(this.value)" id="volume-slider">
-      <span id="volume-value">100%</span>
-    </div>
+<h1 style="color:#80ff80;">odtworzyciel plików mp3</h1>
+
+<div class="player">
+  <div id="track-name">zapodaj nośnik z utworem na odtwarzacz</div>
+
+  <div class="controls">
+    <button onclick="play()">graj</button>
+    <button onclick="pause()">pauza</button>
+    <button onclick="stop()">zeruj</button>
+    <button onclick="download()">ściągnij mp3 ZA DARMOCHĘ</button>
   </div>
 
-  <h1 style="color:#80ff80;">półki szafy pełnej tworów muzycznych,</h1>
-  <h1 style="color:#80ff80;">poszukaj czegoś dla siebie przybyszu</h1>
+  <div class="progress-container" id="progress-container" onclick="seek(event)"></div>
+  <div id="progress-time">0:00 / 0:00</div>
 
-  <div id="song-list"></div>
+  <div class="volume-container">
+    <span style="margin-right:5px;">głośność</span>
+    <input type="range" min="0" max="1" step="0.01" value="1" onchange="setVolume(this.value)" id="volume-slider">
+    <span id="volume-value">100%</span>
+  </div>
+</div>
+
+<h1 style="color:#80ff80;">półki szafy pełnej tworów muzycznych,</h1>
+<h1 style="color:#80ff80;">poszukaj czegoś dla siebie przybyszu</h1>
+
+<div id="song-list"></div>
+
 </div>
 
 <script>
 const audio = new Audio()
 let currentFile = ""
 
-// Odtwarzacz
 function play(){ audio.play() }
 function pause(){ audio.pause() }
 function stop(){ audio.pause(); audio.currentTime = 0 }
+
 function setVolume(v){
   audio.volume = v
   document.getElementById("volume-value").innerText = Math.round(v*100)+"%"
 }
+
 function download(){
   if(!currentFile) return
   const a=document.createElement("a")
@@ -238,27 +257,35 @@ function download(){
   a.click()
 }
 
-// Aktualizacja paska czasu
 function updateProgress(){
   const container=document.getElementById("progress-container")
   container.innerHTML=""
+
   if(audio.duration){
-    const totalSegments=50
+    const total=50
     const gap=2
-    const segmentWidth=(container.clientWidth-gap*(totalSegments-1))/totalSegments
-    for(let i=0;i<totalSegments;i++){
+    const w=(container.clientWidth-gap*(total-1))/total
+
+    for(let i=0;i<total;i++){
       const seg=document.createElement("div")
       seg.className="progress-segment"
-      seg.style.width=segmentWidth+"px"
-      seg.style.marginRight=(i<totalSegments-1?gap+"px":"0")
-      seg.style.background=i<Math.round(totalSegments*(audio.currentTime/audio.duration))?"#ffe09c":"#000"
+      seg.style.width=w+"px"
+      seg.style.marginRight=(i<total-1?gap+"px":"0")
+
+      if(i<Math.round(total*(audio.currentTime/audio.duration))){
+        seg.style.background="#ffe09c"
+      }else{
+        seg.style.background="#000"
+      }
       container.appendChild(seg)
     }
   }
+
   const cm=Math.floor(audio.currentTime/60)
   const cs=Math.floor(audio.currentTime%60).toString().padStart(2,'0')
   const dm=Math.floor(audio.duration/60)||0
   const ds=Math.floor(audio.duration%60).toString().padStart(2,'0')
+
   document.getElementById("progress-time").innerText=`${cm}:${cs} / ${dm}:${ds}`
 }
 
@@ -271,7 +298,6 @@ function seek(e){
   audio.currentTime=percent*audio.duration
 }
 
-// Lista utworów
 fetch("lista.json")
 .then(r=>r.json())
 .then(files=>{
@@ -281,7 +307,9 @@ fetch("lista.json")
     const div=document.createElement("div")
     div.className="song"
     div.innerHTML=`<strong>${file}</strong>
-      <button onclick="loadTrack('pliki_mp3/${file}')">zapodaj na odtwarzacz</button>`
+<button onclick="loadTrack('pliki_mp3/${file}')">
+zapodaj na odtwarzacz
+</button>`
     list.appendChild(div)
   })
 })
@@ -289,9 +317,11 @@ fetch("lista.json")
 function loadTrack(file){
   currentFile=file
   audio.src=file
-  document.getElementById("track-name").innerText=file.replace("pliki_mp3/","")
+  document.getElementById("track-name").innerText=
+  file.replace("pliki_mp3/","")
   audio.play()
 }
 </script>
+
 </body>
 </html>
