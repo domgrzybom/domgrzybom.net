@@ -6,7 +6,7 @@
 
 <style>
 :root {
-  --base-font-size: 20px;
+  --base-font-size: 18px;
 }
 
 /* Czcionka */
@@ -28,27 +28,23 @@ body {
   padding: 0;
   background-image: url('animacja.gif');
   background-repeat: no-repeat;
-  background-position: calc(100% - 0px) 60px;
+  background-position: calc(100% - 40px) 175px;
   background-attachment: scroll;
   image-rendering: pixelated; /* nearest / pixel art */
-
-  /* 🔹 nowa linia */
-  background-size: 640px 640px; /* szerokość x wysokość */
 }
 
 /* ===== BANER ===== */
 .banner-top {
   width: 100%;
-  text-align: center; /* centruje obrazek */
+  display: flex;
+  justify-content: center;
   margin-top: 10px;
 }
 
 .banner-top img {
-  display: inline-block;
-  width: 384px;
+  width: 256px;
   height: 128px;
-  image-rendering: pixelated; /* pixelart */
-  margin-left: -100px; /* przesuwa o 50px w lewo */
+  image-rendering: pixelated; /* jeśli grafika jest pixelartowa */
 }
 
 /* ===== ZAWARTOŚĆ ===== */
@@ -59,13 +55,17 @@ body {
 /* PRZYCISK POWROTU */
 .home-button {
   padding: 2px 6px;
-  font-size: 0.9em;
+  font-size: 0.9em;      /* taka sama na każdym urządzeniu */
   background: #ffe09c;
   color: black;
   border: 2px solid #fff;
   border-right-color: #404040;
   border-bottom-color: #404040;
   cursor: pointer;
+  white-space: normal;    /* pozwala na zawijanie tekstu */
+  max-width: 250px;       /* szerokość na desktopie */
+  text-align: center;
+  width: auto;            /* dopasowuje się do treści */
   margin-bottom: 20px;
 }
 
@@ -75,7 +75,7 @@ body {
   border-bottom-color: #fff;
 }
 
-/* PRZYCISKI 3D */
+/* PRZYCISKI */
 button {
   padding: 2px 8px;
   background: #ffe09c;
@@ -174,14 +174,20 @@ button:active {
   padding: 10px;
   margin-bottom: 10px;
 }
+
+/* RESPONSYWNOŚĆ - smartfony */
+@media (max-width: 480px) {
+  .home-button {
+    width: 90%; /* przycisk dopasowuje się do szerokości ekranu */
+  }
+}
 </style>
 </head>
 
 <body>
 
-<!-- BANER -->
 <div class="banner-top">
-  <img src="dgnBaner.jpg" alt="baner strony">
+<img src="dgnBaner.jpg" alt="baner">
 </div>
 
 <div class="content">
@@ -193,23 +199,23 @@ zaznanie aktu powrotu do przedpokoju domu grzybomu
 <h1 style="color:#80ff80;">odtworzyciel plików mp3</h1>
 
 <div class="player">
-  <div id="track-name">zapodaj nośnik z utworem na odtwarzacz</div>
+<div id="track-name">zapodaj nośnik z utworem na odtwarzacz</div>
 
-  <div class="controls">
-    <button onclick="play()">graj</button>
-    <button onclick="pause()">pauza</button>
-    <button onclick="stop()">zeruj</button>
-    <button onclick="download()">ściągnij mp3 ZA DARMOCHĘ</button>
-  </div>
+<div class="controls">
+<button onclick="play()">graj</button>
+<button onclick="pause()">pauza</button>
+<button onclick="stop()">zeruj</button>
+<button onclick="download()">ściągnij mp3 ZA DARMOCHĘ</button>
+</div>
 
-  <div class="progress-container" id="progress-container" onclick="seek(event)"></div>
-  <div id="progress-time">0:00 / 0:00</div>
+<div class="progress-container" id="progress-container" onclick="seek(event)"></div>
+<div id="progress-time">0:00 / 0:00</div>
 
-  <div class="volume-container">
-    <span style="margin-right:5px;">głośność</span>
-    <input type="range" min="0" max="1" step="0.01" value="1" onchange="setVolume(this.value)" id="volume-slider">
-    <span id="volume-value">100%</span>
-  </div>
+<div class="volume-container">
+<span style="margin-right:5px;">głośność</span>
+<input type="range" min="0" max="1" step="0.01" value="1" onchange="setVolume(this.value)">
+<span id="volume-value">100%</span>
+</div>
 </div>
 
 <h1 style="color:#80ff80;">półki szafy pełnej tworów muzycznych,</h1>
@@ -222,6 +228,7 @@ zaznanie aktu powrotu do przedpokoju domu grzybomu
 const audio = new Audio()
 let currentFile = ""
 
+// odtwarzacz
 function play(){ audio.play() }
 function pause(){ audio.pause() }
 function stop(){ audio.pause(); audio.currentTime = 0 }
@@ -242,32 +249,23 @@ function download(){
 function updateProgress(){
   const container=document.getElementById("progress-container")
   container.innerHTML=""
-
   if(audio.duration){
     const total=50
     const gap=2
     const w=(container.clientWidth-gap*(total-1))/total
-
     for(let i=0;i<total;i++){
       const seg=document.createElement("div")
       seg.className="progress-segment"
       seg.style.width=w+"px"
       seg.style.marginRight=(i<total-1?gap+"px":"0")
-
-      if(i<Math.round(total*(audio.currentTime/audio.duration))){
-        seg.style.background="#ffe09c"
-      }else{
-        seg.style.background="#000"
-      }
+      seg.style.background=(i<Math.round(total*(audio.currentTime/audio.duration))) ? "#ffe09c" : "#000"
       container.appendChild(seg)
     }
   }
-
   const cm=Math.floor(audio.currentTime/60)
   const cs=Math.floor(audio.currentTime%60).toString().padStart(2,'0')
   const dm=Math.floor(audio.duration/60)||0
   const ds=Math.floor(audio.duration%60).toString().padStart(2,'0')
-
   document.getElementById("progress-time").innerText=`${cm}:${cs} / ${dm}:${ds}`
 }
 
@@ -280,6 +278,7 @@ function seek(e){
   audio.currentTime=percent*audio.duration
 }
 
+// lista utworów
 fetch("lista.json")
 .then(r=>r.json())
 .then(files=>{
@@ -289,9 +288,7 @@ fetch("lista.json")
     const div=document.createElement("div")
     div.className="song"
     div.innerHTML=`<strong>${file}</strong>
-<button onclick="loadTrack('pliki_mp3/${file}')">
-zapodaj na odtwarzacz
-</button>`
+    <button onclick="loadTrack('pliki_mp3/${file}')">zapodaj na odtwarzacz</button>`
     list.appendChild(div)
   })
 })
@@ -299,8 +296,7 @@ zapodaj na odtwarzacz
 function loadTrack(file){
   currentFile=file
   audio.src=file
-  document.getElementById("track-name").innerText=
-  file.replace("pliki_mp3/","")
+  document.getElementById("track-name").innerText=file.replace("pliki_mp3/","")
   audio.play()
 }
 </script>
