@@ -1,15 +1,133 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>dōmgrzybōm.mycelium</title>
-  <link rel="icon" href="favicon.ico">
+<meta charset="UTF-8">
+<title>dōmgrzybōm.mycelium</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.ico">
+
+<style>
+:root {
+  --base-font-size: 18px;
+}
+
+/* CZCIONKA */
+@font-face {
+  font-family: "AcPlus_IBM_VGA";
+  src: url('AcPlus_IBM_VGA_8x16.ttf') format("truetype");
+}
+
+/* GLOBAL */
+body, button, strong, h1, a {
+  font-family: "AcPlus_IBM_VGA", monospace;
+  font-size: var(--base-font-size);
+  margin: 0;
+}
+
+body {
+  background-color: #000;
+  color: #ffe09c;
+  padding: 0;
+  background-image: url('animacja.gif');
+  background-repeat: no-repeat;
+  background-position: calc(100% - 0px) 220px;
+  background-attachment: scroll;
+  image-rendering: pixelated;
+  background-size: 512px 512px;
+}
+
+/* BANER */
+.banner-top {
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.banner-top img {
+  display: inline-block;
+  width: 384px;
+  height: 128px;
+  image-rendering: pixelated;
+}
+
+/* ZAWARTOŚĆ */
+.content {
+  padding: 20px;
+}
+
+/* RAMKA ENERGII */
+.energy-box {
+  width: 420px;
+  border: 2px solid #ffe09c;
+  padding: 15px;
+  margin-top: 20px;
+}
+
+.energy-title {
+  color: #ffe09c;
+  margin-bottom: 15px;
+}
+
+/* PRZYCISKI ENERGII (ZIELONE) */
+.energy-button {
+  display: block;
+  width: fit-content;
+  padding: 4px 10px;
+  margin-bottom: 10px;
+
+  background: #80ff80;
+  color: black;
+
+  border: 2px solid #fff;
+  border-right-color: #204020;
+  border-bottom-color: #204020;
+
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.energy-button:active {
+  border: 2px solid #204020;
+  border-right-color: #fff;
+  border-bottom-color: #fff;
+}
+
+/* RESPONSYWNOŚĆ */
+@media (max-width: 600px) {
+  .energy-box {
+    width: 90%;
+  }
+}
+</style>
 </head>
+
 <body>
 
-<h1>DOMGRZYBOM NETWORK</h1>
+<!-- BANER -->
+<div class="banner-top">
+  <img src="dgnBaner.jpg" alt="baner strony">
+</div>
 
-<a href="muzyka/">energia muzyki</a>
+<div class="content">
+
+<h1 style="color:#80ff80;">dōmgrzybōm mycelium</h1>
+
+<!-- ENERGIE -->
+<div class="energy-box">
+  <div class="energy-title">energie</div>
+
+  <a href="muzyka/" class="energy-button">energia muzyki</a>
+  <a href="muzyka/" class="energy-button">energia nauki</a>
+  <a href="muzyka/" class="energy-button">energia komputera</a>
+  <!-- TU DODAJESZ KOLEJNE -->
+  <!--
+  <a href="galeria/" class="energy-button">energia obrazu</a>
+  <a href="eksperymenty/" class="energy-button">energia chaosu</a>
+  -->
+
+</div>
+
+</div>
 
 </body>
 </html>
