@@ -7,17 +7,13 @@
 <link rel="icon" href="../favicon.ico">
 
 <style>
-:root {
-  --base-font-size: 18px;
-}
+:root { --base-font-size: 18px; }
 
-/* Czcionka */
 @font-face {
   font-family: "AcPlus_IBM_VGA";
   src: url('../AcPlus_IBM_VGA_8x16.ttf') format("truetype");
 }
 
-/* GLOBAL */
 body, button, strong, h1, input {
   font-family: "AcPlus_IBM_VGA", monospace;
   font-size: var(--base-font-size);
@@ -27,16 +23,48 @@ body, button, strong, h1, input {
 body {
   background-color: #000;
   color: #ffe09c;
-  padding: 0;
   background-image: url('../animacja.gif');
   background-repeat: no-repeat;
-  background-position: calc(100% - 0px) 220px;
-  background-attachment: scroll;
+  background-position: calc(100% - 150px) 320px;
+  background-size: 300px 300px;
   image-rendering: pixelated;
-  background-size: 512px 512px; /* opcjonalnie dopasowane do rozmiaru GIFa */
 }
 
-/* ===== BANER ===== */
+.content { padding: 20px; padding-left: 40px; }
+
+/* MONITOR */
+.monitor-wrapper {
+  position: relative;
+  width: 440px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.monitor-img {
+  width: 100%;
+  display: block;
+  image-rendering: pixelated;
+}
+
+.monitor-screen {
+  position: absolute;
+  top: 30px;
+  left: 26px;
+  width: 388px;
+  height: 291px;
+  background: transparent;
+  overflow: hidden;
+  display: none;
+}
+
+.monitor-screen img,
+.monitor-screen video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* BANER */
 .banner-top {
   width: 100%;
   text-align: center;
@@ -44,22 +72,14 @@ body {
 }
 
 .banner-top img {
-  display: inline-block;
   width: 384px;
   height: 192px;
   image-rendering: pixelated;
-  /* jeśli chcesz przesunąć w lewo lub prawo: margin-left: -100px; */
 }
 
-/* ===== ZAWARTOŚĆ ===== */
-.content {
-  padding: 20px;
-}
-
-/* PRZYCISK POWROTU */
+/* PRZYCISK */
 .home-button {
   padding: 2px 6px;
-  font-size: 18px; /* dokładnie jak lista utworów */
   background: #ffe09c;
   color: black;
   border: 2px solid #fff;
@@ -67,10 +87,6 @@ body {
   border-bottom-color: #404040;
   cursor: pointer;
   margin-bottom: 20px;
-  white-space: nowrap;
-  max-width: 500px;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .home-button:active {
@@ -79,7 +95,9 @@ body {
   border-bottom-color: #fff;
 }
 
-/* PRZYCISKI 3D */
+.home-button-wrapper { text-align: center; }
+
+/* BUTTONY */
 button {
   padding: 2px 8px;
   background: #ffe09c;
@@ -96,7 +114,7 @@ button:active {
   border-bottom-color: #fff;
 }
 
-/* ===== ODTWARZACZ ===== */
+/* PLAYER */
 .player {
   width: 420px;
   border: 2px solid #ffe09c;
@@ -104,16 +122,11 @@ button:active {
   margin-bottom: 20px;
 }
 
-#track-name {
-  margin-bottom: 10px;
-  color: #80ff80;
-  font-size: 18px;
-}
+#track-name { margin-bottom: 10px; color: #80ff80; }
 
-.controls {
-  margin-bottom: 10px;
-}
+.controls { margin-bottom: 10px; }
 
+/* PROGRESS */
 .progress-container {
   display: flex;
   height: 20px;
@@ -122,10 +135,7 @@ button:active {
   margin-bottom: 5px;
 }
 
-.progress-segment {
-  height: 100%;
-  flex-shrink: 0;
-}
+.progress-segment { height: 100%; flex-shrink: 0; }
 
 #progress-time {
   color: #ffe09c;
@@ -133,7 +143,7 @@ button:active {
   margin-bottom: 10px;
 }
 
-/* GŁOŚNOŚĆ */
+/* VOLUME */
 .volume-container {
   display: flex;
   align-items: center;
@@ -169,7 +179,7 @@ button:active {
   border-bottom-color: #404040;
 }
 
-/* LISTA UTWORÓW */
+/* LISTA */
 .song {
   display: flex;
   align-items: center;
@@ -178,33 +188,32 @@ button:active {
   border: 2px solid #ffe09c;
   padding: 10px;
   margin-bottom: 10px;
-  font-size: 18px; /* taki sam rozmiar jak przycisk home-button i track-name */
-}
-
-
-  }
-
-  .player, .song {
-    width: 90%;
-  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- BANER -->
 <div class="banner-top">
-  <img src="../dgnBanerN.jpg" alt="baner strony">
+  <img src="../dgnBanerN.jpg">
 </div>
 
 <div class="content">
 
-<!-- PRZYCISK POWROTU WYŚRODKOWANY -->
-<div style="text-align: center; margin-bottom: 20px;">
+<div class="home-button-wrapper">
   <button class="home-button" onclick="location.href='../'">
     zaznanie aktu powrotu do przedpokoju dōmugrzybōmu
   </button>
+</div>
+
+<!-- MONITOR -->
+<div class="monitor-wrapper" onclick="toggleScreen()">
+  <img id="monitor-img" src="monitor_off.png" class="monitor-img">
+
+  <div class="monitor-screen" id="monitor-screen">
+    <img id="screen-image" style="display:none;">
+    <video id="screen-video" loop muted style="display:none;"></video>
+  </div>
 </div>
 
 <h1 style="color:#80ff80;">odtworzyciel plików mp3</h1>
@@ -224,26 +233,34 @@ button:active {
 
   <div class="volume-container">
     <span style="margin-right:5px;">głośność</span>
-    <input type="range" min="0" max="1" step="0.01" value="1" onchange="setVolume(this.value)" id="volume-slider">
+    <input type="range" min="0" max="1" step="0.01" value="1" onchange="setVolume(this.value)">
     <span id="volume-value">100%</span>
   </div>
 </div>
 
-<h1 style="color:#80ff80;">półki szafy pełnej tworów muzycznych,</h1>
-<h1 style="color:#80ff80;">poszukaj czegoś dla siebie przybyszu</h1>
-<h1 style="color:#80ff80;">pierwsze z brzegu pachną świeżością,</h1>
-<h1 style="color:#80ff80;">głebsze zaś pokryte kurzością</h1>
-  <div id="song-list"></div>
+<div id="song-list"></div>
 
 </div>
 
 <script>
 const audio = new Audio()
 let currentFile = ""
+let screenOn = false
 
-function play(){ audio.play() }
+function play(){
+  audio.play()
+
+  if(screenOn){
+    loadVisual(currentFile.replace("pliki_mp3/",""))
+  }
+}
+
 function pause(){ audio.pause() }
-function stop(){ audio.pause(); audio.currentTime = 0 }
+
+function stop(){
+  audio.pause()
+  audio.currentTime = 0
+}
 
 function setVolume(v){
   audio.volume = v
@@ -273,11 +290,10 @@ function updateProgress(){
       seg.style.width=w+"px"
       seg.style.marginRight=(i<total-1?gap+"px":"0")
 
-      if(i<Math.round(total*(audio.currentTime/audio.duration))){
-        seg.style.background="#ffe09c"
-      }else{
-        seg.style.background="#000"
-      }
+      seg.style.background = i < Math.round(total*(audio.currentTime/audio.duration))
+        ? "#ffe09c"
+        : "#000"
+
       container.appendChild(seg)
     }
   }
@@ -293,10 +309,97 @@ function updateProgress(){
 audio.ontimeupdate=updateProgress
 
 function seek(e){
-  const container=document.getElementById("progress-container")
-  const rect=container.getBoundingClientRect()
+  const rect=e.currentTarget.getBoundingClientRect()
   const percent=(e.clientX-rect.left)/rect.width
   audio.currentTime=percent*audio.duration
+}
+
+/* AUTO VISUAL */
+function loadVisual(name){
+  const img = document.getElementById("screen-image")
+  const vid = document.getElementById("screen-video")
+
+  img.style.display = "none"
+  vid.style.display = "none"
+
+  const base = name.replace(".mp3","")
+  const exts = [".jpg", ".gif", ".png", ".mp4"]
+
+  let i = 0
+
+  function tryNext(){
+    if(i >= exts.length){
+      img.src = "visuals/default.jpg"
+      img.style.display = "block"
+      return
+    }
+
+    const path = "visuals/" + base + exts[i]
+    i++
+
+    if(path.endsWith(".mp4")){
+      // video sprawdzamy “na żywo”
+      vid.onloadeddata = () => {
+        vid.style.display = "block"
+        vid.play()
+      }
+      vid.onerror = tryNext
+      vid.src = path
+      return
+    }
+
+    const testImg = new Image()
+
+    testImg.onload = () => {
+      img.src = path
+      img.style.display = "block"
+    }
+
+    testImg.onerror = tryNext
+
+    testImg.src = path
+  }
+
+  tryNext()
+}
+
+/* MONITOR POWER */
+function toggleScreen(){
+  const screen=document.getElementById("monitor-screen")
+  const monitor=document.getElementById("monitor-img")
+
+  screenOn=!screenOn
+
+  if(screenOn){
+    screen.style.display="block"
+    monitor.src="monitor_on.png"
+
+    if(currentFile){
+      loadVisual(currentFile.replace("pliki_mp3/",""))
+    }
+
+  } else {
+    screen.style.display="none"
+    monitor.src="monitor_off.png"
+
+    document.getElementById("screen-image").src=""
+    document.getElementById("screen-video").src=""
+  }
+}
+
+function loadTrack(file){
+  currentFile=file
+  audio.src=file
+
+  const name=file.replace("pliki_mp3/","")
+  document.getElementById("track-name").innerText=name
+
+  audio.play()
+
+  // TYLKO jeśli monitor włączony
+  if(screenOn){
+    loadVisual(name)
+  }
 }
 
 fetch("lista.json")
@@ -304,24 +407,15 @@ fetch("lista.json")
 .then(files=>{
   files.reverse()
   const list=document.getElementById("song-list")
+
   files.forEach(file=>{
     const div=document.createElement("div")
     div.className="song"
     div.innerHTML=`<strong>${file}</strong>
-<button onclick="loadTrack('pliki_mp3/${file}')">
-odtwórz
-</button>`
+<button onclick="loadTrack('pliki_mp3/${file}')">odtwórz</button>`
     list.appendChild(div)
   })
 })
-
-function loadTrack(file){
-  currentFile=file
-  audio.src=file
-  document.getElementById("track-name").innerText=
-  file.replace("pliki_mp3/","")
-  audio.play()
-}
 </script>
 
 </body>
